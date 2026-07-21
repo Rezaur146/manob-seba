@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>মানব সেবা সংঘ</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+    body { background-color: #eef2f5; display: flex; justify-content: center; padding-bottom: 70px; }
+    .mobile-card { width: 100%; max-width: 450px; background: #f8fafc; min-height: 100vh; position: relative; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+    
+    /* Header */
+    .header { background-color: #0d9488; color: white; text-align: center; padding: 25px 15px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; }
+    .header h1 { font-size: 22px; font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 13px; opacity: 0.9; }
+    
+    .container { padding: 15px; }
+
+    /* Auth Box */
+    .auth-box { background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .auth-box input { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #ddd; border-radius: 8px; }
+    .auth-box button { width: 48%; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; margin-top: 5px; }
+    .btn-signup { background: #0d9488; }
+    .btn-login { background: #2563eb; }
+
+    /* Emergency Services */
+    .emergency-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+    .service-card { background: white; padding: 15px 5px; border-radius: 12px; text-align: center; text-decoration: none; color: #ef4444; font-weight: bold; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+    .service-card i { font-size: 24px; margin-bottom: 6px; display: block; }
+
+    /* Section Headers */
+    .section-title { font-size: 16px; color: #0f766e; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #0d9488; padding-bottom: 4px; width: fit-content; }
+
+    /* Notice Cards */
+    .notice-box { background: white; border-radius: 15px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+    .notice-item { border-left: 4px solid #0d9488; padding-left: 10px; margin-bottom: 15px; }
+    .notice-item:last-child { margin-bottom: 0; }
+    .notice-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; color: #1e293b; }
+    .notice-date { font-size: 11px; color: #64748b; }
+    .notice-desc { font-size: 12px; color: #475569; margin-top: 4px; line-height: 1.4; }
+
+    /* Members Section */
+    .member-box { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+    .member-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+    .member-item:last-child { border-bottom: none; }
+    .member-info { display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 40px; height: 40px; background: #14b8a6; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .member-details h4 { font-size: 14px; color: #0f172a; }
+    .member-details p { font-size: 12px; color: #64748b; }
+    .call-btn { color: #0d9488; font-size: 18px; text-decoration: none; }
+
+    /* Bottom Nav */
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 450px; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #e2e8f0; }
+    .nav-item { text-align: center; color: #64748b; text-decoration: none; font-size: 11px; }
+    .nav-item i { font-size: 18px; display: block; margin-bottom: 2px; }
+    .nav-item.active { color: #0d9488; font-weight: bold; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="mobile-card">
+  <!-- Header -->
+  <div class="header">
+    <h1 id="app-title"><i class="fa-solid fa-hands-holding-child"></i> মানব সেবা সংঘ</h1>
+    <p id="app-slogan">একত্রিত হই, সেবা করি</p>
+  </div>
+
+  <div class="container">
+    <!-- Auth Section -->
+    <div id="auth-section" class="auth-box">
+      <h3 style="font-size: 14px; margin-bottom: 8px; color: #334155;">সাইন-ইন / লগইন</h3>
+      <input type="email" id="email" placeholder="ইমেল">
+      <input type="password" id="password" placeholder="পাসওয়ার্ড">
+      <div style="display: flex; justify-content: space-between;">
+        <button class="btn-signup" onclick="signUp()">সাইন আপ</button>
+        <button class="btn-login" onclick="login()">লগইন</button>
+      </div>
+    </div>
+
+    <!-- Emergency Call Grid -->
+    <div class="emergency-grid" id="emergency-list">
+      <!-- Firebase থেকে ডাইনামিক ভাবে আসবে -->
+    </div>
+
+    <!-- Notice Board -->
+    <div class="section-title"><i class="fa-solid fa-bell"></i> সাম্প্রতিক নোটিশ</div>
+    <div class="notice-box" id="notice-list">
+      <p style="font-size:12px; color:#64748b;">লোড হচ্ছে...</p>
+    </div>
+
+    <!-- Committee Members -->
+    <div class="section-title"><i class="fa-solid fa-users"></i> কার্যনির্বাহী সদস্য</div>
+    <div class="member-box" id="member-list">
+      <p style="font-size:12px; color:#64748b;">লোড হচ্ছে...</p>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i>হোম</a>
+    <a href="#" class="nav-item"><i class="fa-solid fa-bullhorn"></i>নোটিশ</a>
+    <a href="#" class="nav-item"><i class="fa-solid fa-droplet"></i>রক্তদান</a>
+    <a href="#" class="nav-item"><i class="fa-solid fa-comments"></i>চ্যাট</a>
+  </div>
+</div>
+
+<!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBZHVdPfURp8M5Go1H-2QehW621NDexW9A",
+    authDomain: "bd-clean-420bd.firebaseapp.com",
+    databaseURL: "https://bd-clean-420bd-default-rtdb.firebaseio.com",
+    projectId: "bd-clean-420bd",
+    storageBucket: "bd-clean-420bd.appspot.com",
+    messagingSenderId: "802810102329",
+    appId: "1:802810102329:web:bdcleanapp"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const database = firebase.database();
+
+  function signUp() {
+    const e = document.getElementById('email').value, p = document.getElementById('password').value;
+    auth.createUserWithEmailAndPassword(e, p).then(() => alert("সফলভাবে সাইন আপ হয়েছে!")).catch(err => alert(err.message));
+  }
+
+  function login() {
+    const e = document.getElementById('email').value, p = document.getElementById('password').value;
+    auth.signInWithEmailAndPassword(e, p).then(() => alert("সফলভাবে লগইন হয়েছে!")).catch(err => alert(err.message));
+  }
+
+  auth.onAuthStateChanged(user => {
+    if (user) { document.getElementById('auth-section').classList.add('hidden'); }
+  });
+
+  // ১. নোটিশ লোড
+  database.ref('notices').on('value', snapshot => {
+    const noticeList = document.getElementById('notice-list');
+    noticeList.innerHTML = "";
+    const data = snapshot.val();
+    if (data) {
+      Object.keys(data).reverse().forEach(key => {
+        const item = data[key];
+        noticeList.innerHTML += `
+          <div class="notice-item">
+            <div class="notice-header">
+              <span>${item.title}</span>
+              <span class="notice-date">${item.date}</span>
+            </div>
+            <div class="notice-desc">${item.details}</div>
+          </div>
+        `;
+      });
+    } else {
+      noticeList.innerHTML = "<p style='font-size:12px; color:#64748b;'>কোনো নোটিশ নেই</p>";
+    }
+  });
+
+  // ২. জরুরি নম্বর লোড
+  database.ref('emergency').on('value', snapshot => {
+    const emList = document.getElementById('emergency-list');
+    emList.innerHTML = "";
+    const data = snapshot.val();
+    if (data) {
+      Object.keys(data).forEach(key => {
+        const item = data[key];
+        emList.innerHTML += `
+          <a href="tel:${item.number}" class="service-card">
+            <i class="${item.icon || 'fa-solid fa-phone-volume'}"></i> ${item.name}
+          </a>
+        `;
+      });
+    } else {
+      emList.innerHTML = `
+        <a href="tel:999" class="service-card"><i class="fa-solid fa-phone-volume"></i> পুলিশ</a>
+        <a href="tel:999" class="service-card"><i class="fa-solid fa-truck-medical"></i> অ্যাম্বুলেন্স</a>
+        <a href="tel:16163" class="service-card"><i class="fa-solid fa-fire-extinguisher"></i> ফায়ার সার্ভিস</a>
+      `;
+    }
+  });
+
+  // ৩. কার্যনির্বাহী সদস্য লোড
+  database.ref('members').on('value', snapshot => {
+    const memberList = document.getElementById('member-list');
+    memberList.innerHTML = "";
+    const data = snapshot.val();
+    if (data) {
+      Object.keys(data).forEach(key => {
+        const item = data[key];
+        const firstLetter = item.name ? item.name.charAt(0) : 'ম';
+        memberList.innerHTML += `
+          <div class="member-item">
+            <div class="member-info">
+              <div class="avatar">${firstLetter}</div>
+              <div class="member-details">
+                <h4>${item.name}</h4>
+                <p>${item.role}</p>
+              </div>
+            </div>
+            <a href="tel:${item.phone}" class="call-btn"><i class="fa-solid fa-phone"></i></a>
+          </div>
+        `;
+      });
+    } else {
+      memberList.innerHTML = "<p style='font-size:12px; color:#64748b;'>কোনো সদস্য তথ্য পাওয়া যায়নি</p>";
+    }
+  });
+</script>
+</body>
+</html>
