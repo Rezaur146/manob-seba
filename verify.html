@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Verification System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between font-sans">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-emerald-100 shadow-sm py-4 px-6">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between text-center sm:text-left">
+            <div class="flex items-center space-x-3 mb-3 sm:mb-0">
+                <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl shadow-inner">
+                    <span>🛡️</span>
+                </div>
+                <div>
+                    <h1 id="headerMadrasahName" class="text-xl font-bold text-emerald-900">অনলাইন সার্টিফিকেট যাচাইকরণ</h1>
+                    <p id="headerAddress" class="text-xs text-slate-500">সঠিক তথ্য দিয়ে সনদ যাচাই করুন</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-10 max-w-2xl flex-grow">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-slate-800 flex items-center justify-center gap-2">
+                <span class="text-emerald-600">✅</span> Certificate Verification
+            </h2>
+            <p class="text-sm text-slate-500 mt-1">Enter Roll and Registration number below to verify certificate</p>
+        </div>
+
+        <!-- Search Box Card -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <form id="verifyForm" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">রোল নম্বর (Roll No)</label>
+                        <input type="text" id="rollInput" required placeholder="যেমন: 101" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 text-slate-800 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">রেজিস্ট্রেশন নম্বর (Registration No)</label>
+                        <input type="text" id="regInput" required placeholder="যেমন: 987654" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 text-slate-800 font-medium">
+                    </div>
+                </div>
+                <button type="submit" id="searchBtn" class="w-full bg-emerald-800 text-white py-3 rounded-xl font-semibold hover:bg-emerald-900 transition duration-200 shadow-sm">
+                    Verify Certificate
+                </button>
+            </form>
+        </div>
+
+        <!-- Result Box -->
+        <div id="resultBox" class="hidden mt-6 bg-white rounded-2xl shadow-sm border border-emerald-200 overflow-hidden">
+            <div class="bg-emerald-50 px-6 py-4 border-b border-emerald-100 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="text-emerald-600 text-lg">✅</span>
+                    <h3 class="font-bold text-emerald-900">Certificate Verified</h3>
+                </div>
+                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">Valid</span>
+            </div>
+            
+            <div id="dynamicFieldsContainer" class="p-6 space-y-3 text-sm text-slate-700"></div>
+
+            <div class="px-6 pb-6 pt-2">
+                <button id="viewCertBtn" type="button" class="w-full bg-sky-600 text-white py-3 rounded-xl font-semibold hover:bg-sky-700 transition duration-200 shadow-sm flex items-center justify-center gap-2">
+                    <span>📜</span> সার্টিফিকেট দেখতে এখানে ক্লিক করুন
+                </button>
+            </div>
+        </div>
+
+        <!-- Error Box -->
+        <div id="errorBox" class="hidden mt-6 bg-red-50 p-4 rounded-xl border border-red-200 text-center text-red-600 text-sm">
+            ❌ দুঃখিত! এই রোল ও রেজিস্ট্রেশন নম্বরের কোনো সঠিক তথ্য পাওয়া যায়নি।
+        </div>
+    </main>
+
+    <!-- Certificate Modal -->
+    <div id="certModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border-8 border-amber-100 relative max-h-[90vh] flex flex-col">
+            <button id="closeModal" class="absolute top-4 right-4 bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition z-10">✕</button>
+
+            <div id="certContentArea" class="p-4 sm:p-6 overflow-y-auto flex-grow text-center"></div>
+
+            <div class="bg-slate-100 px-6 py-4 flex justify-end gap-3 border-t">
+                <button onclick="window.print()" class="bg-emerald-700 text-white px-5 py-2 rounded-xl text-xs font-semibold hover:bg-emerald-800 transition">🖨️ Print / Save PDF</button>
+                <button id="closeModalBtn" class="bg-slate-600 text-white px-5 py-2 rounded-xl text-xs font-semibold hover:bg-slate-700 transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK & Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgBXd5T2p04_rjs2KUqs_CR8kGt-LQ4VI",
+            authDomain: "madrasah-verification.firebaseapp.com",
+            projectId: "madrasah-verification",
+            storageBucket: "madrasah-verification.firebasestorage.app",
+            messagingSenderId: "422141655140",
+            appId: "1:422141655140:web:ffd838c085023696e74771"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const form = document.getElementById('verifyForm');
+        const resultBox = document.getElementById('resultBox');
+        const errorBox = document.getElementById('errorBox');
+        const container = document.getElementById('dynamicFieldsContainer');
+        const certContentArea = document.getElementById('certContentArea');
+        const certModal = document.getElementById('certModal');
+        const closeModal = document.getElementById('closeModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const viewCertBtn = document.getElementById('viewCertBtn');
+
+        const ignoreFields = ['roll', 'reg', 'madrasahName', 'madrasahAddress', 'certificateImage'];
+        const fieldLabels = {
+            name: "Student Name",
+            fatherName: "Father's Name",
+            motherName: "Mother's Name",
+            result: "Result / Grade",
+            passingYear: "Passing Year",
+            dob: "Date of Birth",
+            department: "Department / Division",
+            gpa: "GPA / Marks"
+        };
+
+        let currentStudentData = null;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const roll = document.getElementById('rollInput').value.trim();
+            const reg = document.getElementById('regInput').value.trim();
+
+            resultBox.classList.add('hidden');
+            errorBox.classList.add('hidden');
+            container.innerHTML = '';
+
+            try {
+                const q = query(
+                    collection(db, "certificates"), 
+                    where("roll", "==", roll),
+                    where("reg", "==", reg)
+                );
+
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        currentStudentData = data; 
+
+                        if(data.madrasaName) {
+                            document.getElementById('headerMadrasahName').innerText = data.madrasaName;
+                        }
+
+                        for (const [key, value] of Object.entries(data)) {
+                            if (ignoreFields.includes(key)) continue;
+                            let labelName = fieldLabels[key] || (key.charAt(0).toUpperCase() + key.slice(1));
+                            container.innerHTML += `
+                                <div class="flex justify-between border-b pb-2">
+                                    <span class="text-slate-500">${labelName}</span>
+                                    <span class="font-semibold text-slate-800">${value}</span>
+                                </div>
+                            `;
+                        }
+                    });
+                    resultBox.classList.remove('hidden');
+                } else {
+                    errorBox.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Firebase Error: ", error);
+                alert("ডেটা লোড করতে সমস্যা হয়েছে। ইন্টারনেট বা কনফিগারেশন চেক করুন।");
+            }
+        });
+
+        viewCertBtn.addEventListener('click', () => {
+            if (currentStudentData) {
+                if (currentStudentData.certificateImage) {
+                    certContentArea.innerHTML = `
+                        <div class="rounded-xl overflow-hidden shadow-md border border-slate-200">
+                            <img src="${currentStudentData.certificateImage}" alt="Certificate" class="w-full h-auto object-contain mx-auto">
+                        </div>
+                    `;
+                } else {
+                    certContentArea.innerHTML = `
+                        <div class="p-6 sm:p-8 text-center border-4 border-amber-300 m-2 bg-amber-50/30 rounded-xl relative">
+                            <div class="text-amber-700 text-3xl mb-1">📜</div>
+                            <h3 class="text-xl font-bold text-emerald-900">${currentStudentData.madrasaName || "মাদ্রাসার নাম"}</h3>
+                            <h4 class="text-xs tracking-widest uppercase font-semibold text-amber-800 my-3">— CERTIFICATE —</h4>
+                            <h2 class="text-2xl font-extrabold text-slate-900 border-b-2 border-dashed border-slate-300 pb-1 inline-block px-6 mb-3">${currentStudentData.name || ""}</h2>
+                            <p class="text-sm text-slate-700 leading-relaxed mb-6">
+                                Roll: <b>${currentStudentData.roll || ""}</b> | Reg: <b>${currentStudentData.reg || ""}</b><br>
+                                Result: <span class="text-emerald-700 font-bold">${currentStudentData.result || ""}</span>
+                            </p>
+                        </div>
+                    `;
+                }
+                certModal.classList.remove('hidden');
+            }
+        });
+
+        closeModal.addEventListener('click', () => certModal.classList.add('hidden'));
+        closeModalBtn.addEventListener('click', () => certModal.classList.add('hidden'));
+    </script>
+</body>
+</html>
